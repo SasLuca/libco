@@ -1,0 +1,11 @@
+Single header version of the libco.
+
+Forked from https://github.com/edsiper/flb_libco and https://byuu.org/projects/libco
+
+Options:
+
+#define LIBCO_MP -> allow the use thread_local.
+
+#define LIBCO_NO_SSE -> provides a substantial speed-up on Win64 only but it will trash XMM registers. Only use this if you are sure your application or it's dependencies don't use SSE explicitly.
+
+#define LIBCO_MPROTECT -> On [amd64, arm, ppc, x86] this will enable the use of mprotect instead of marking co_swap_function as a text (code) section.
