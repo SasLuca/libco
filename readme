@@ -6,7 +6,7 @@ Forked from https://github.com/edsiper/flb_libco and https://byuu.org/projects/l
 
 Options:
 
-#define LIBCO_MP -> allow the use thread_local.
+#define LIBCO_MP -> allow the use thread_local. (Note: Doesn't work with mingw for some reason)
 
 #define LIBCO_NO_SSE -> provides a substantial speed-up on Win64 only but it will trash XMM registers. Only use this if you are sure your application or it's dependencies don't use SSE explicitly.
 
