@@ -1,7 +1,9 @@
 # Single header version of the libco
 
+**Get the file from the `generated` directory**.
+
 This is a single header version of `libco` by Byuu (https://byuu.org/projects/libco), which is a portable library for coroutines in C.
-The single header version is manually concatenated from `libco` fork by @edsiper (https://github.com/edsiper/flb_libco).
+The single header version is manually concatenated from a `libco` fork by @edsiper (https://github.com/edsiper/flb_libco).
 
 All concatenated files are placed in `#pragma region`/`#pragma endregion` blocks for easy collapse and visualization in an editor.
 All `#include` statements from the concatenated files have been commented out and if a file has been concatenated in their place then the statement is followed by a `#pragma region`.
