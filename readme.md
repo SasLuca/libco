@@ -10,7 +10,7 @@ All `#include` statements from the concatenated files have been commented out an
 
 # Options:
 
-1. `#define LIBCO_MP` -> allow the use `thread_local`. (Note: Doesn't work with `mingw` for some reason)
+1. `#define LIBCO_MP` -> allow the use of `thread_local`. (Note: Doesn't work with `mingw` for some reason)
 
 2. `#define LIBCO_NO_SSE` -> provides a substantial speed-up on Win64 only but it will trash XMM registers. Only use this if you are sure your application or it's dependencies don't use SSE explicitly.
 
