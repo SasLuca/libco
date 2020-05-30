@@ -3,5 +3,10 @@
 # Except:
 !.gitignore
 !readme.md
+
 !source/*
 !generated/*
+
+!example/example.c
+!example/build.bat
+!example/CMakeLists.txt

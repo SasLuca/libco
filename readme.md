@@ -8,6 +8,17 @@ The single header version is manually concatenated from a `libco` fork by @edsip
 All concatenated files are placed in `#pragma region`/`#pragma endregion` blocks for easy collapse and visualization in an editor.
 All `#include` statements from the concatenated files have been commented out and if a file has been concatenated in their place then the statement is followed by a `#pragma region`.
 
+## Existing backends:
+- x86 CPUs
+- amd64 CPUs
+- PowerPC CPUs
+- PowerPC64 ELFv1 CPUs
+- PowerPC64 ELFv2 CPUs
+- ARM 32-bit CPUs
+- ARM 64-bit (AArch64) CPUs
+- POSIX platforms (setjmp)
+- Windows platforms (fibers)
+
 ## Compile time options:
 
 1. `#define LIBCO_MP` -> Allows the use `thread_local`. (Note: Doesn't work with `mingw` for some reason)
@@ -28,20 +39,18 @@ All `#include` statements from the concatenated files have been commented out an
 ```cpp
 #define LIBCO_IMPLEMENTATION
 
-#include "stdlib.h"
 #include "stdio.h"
 #include "libco.h"
 
-// main_thread
 cothread_t main_cothread;
 
-void my_entry()
+void my_entry(void)
 {
     int i = 0;
     while (1)
     {
         printf("%d\n", i++);
-        
+
         // Yield to main cothread
         co_switch(main_cothread);
     }
@@ -53,15 +62,13 @@ int main()
     main_cothread = co_active();
 
     // Init separate cothread
-    size_t actual_size = 0;
-    size_t request_size = 1 * 1024 * 1024;
-    cothread_t other_cothread = co_create(request_size, my_entry, &actual_size);
-    
+    cothread_t other_cothread = co_create(1 * 1024 * 1024, my_entry, NULL);
+
     // Yield to the cothread
     co_switch(other_cothread);
     co_switch(other_cothread);
     co_switch(other_cothread);
-    
+
     // Delete the other cothread
     co_delete(other_cothread);
 }
