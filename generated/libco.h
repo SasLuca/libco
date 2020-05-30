@@ -1,3 +1,63 @@
+/*
+
+Single header version of the libco (https://github.com/SasLuca/libco).
+
+Define LIBCO_IMPLEMENTATION in order to include the implementation.
+
+Forked from https://github.com/edsiper/flb_libco and https://byuu.org/projects/libco
+
+License: ISC LICENSE (https://opensource.org/licenses/ISC)
+
+Options:
+
+#define LIBCO_MP -> allow the use thread_local. (Note: Doesn't work with mingw for some reason)
+
+#define LIBCO_NO_SSE -> provides a substantial speed-up on Win64 only but it will trash XMM registers. Only use this if you are sure your application or it's dependencies don't use SSE explicitly.
+
+#define LIBCO_MPROTECT -> On [amd64, arm, ppc, x86] this will enable the use of mprotect instead of marking co_swap_function as a text (code) section.
+
+Example:
+
+#define LIBCO_IMPLEMENTATION
+#include "stdlib.h"
+#include "stdio.h"
+#include "libco.h"
+
+cothread_t main_cothread; // main_thread
+
+void my_entry()
+{
+    int i = 0;
+    while (1)
+    {
+        printf("%d\n", i++);
+        
+        // Yield to main cothread
+        co_switch(main_cothread);
+    }
+}
+
+int main()
+{
+    // Get reference to the main cthread
+    main_cothread = co_active();
+
+    // Init separate cothread
+    size_t actual_size = 0;
+    size_t request_size = 1 * 1024 * 1024;
+    cothread_t other_cothread = co_create(request_size, my_entry, &actual_size);
+    
+    // Yield to the cothread
+    co_switch(other_cothread);
+    co_switch(other_cothread);
+    co_switch(other_cothread);
+    
+    // Delete the other cothread
+    co_delete(other_cothread);
+}
+
+*/
+
 #pragma region libco.h
 
 /*
@@ -193,7 +253,7 @@ cothread_t co_create(unsigned int size, void (*entrypoint)(void),
   if(!co_active_handle) co_active_handle = &co_active_buffer;
   size += 256;  /* allocate additional space for storage */
   size &= ~15;  /* align stack to 16-byte boundary */
-  *out_size = size;
+  if (out_size) *out_size = size;
 
   if(handle = (cothread_t)malloc(size)) {
     long *p = (long*)((char*)handle + size);  /* seek to top of stack */
@@ -415,7 +475,7 @@ cothread_t co_create(unsigned int size, void (*entrypoint)(void),
   if(!co_active_handle) co_active_handle = &co_active_buffer;
   size += 512;  /* allocate additional space for storage */
   size &= ~15;  /* align stack to 16-byte boundary */
-  *out_size = size;
+  if (out_size) *out_size = size;
 
   if((handle = (cothread_t)malloc(size))) {
     long long *p = (long long*)((char*)handle + size);  /* seek to top of stack */
@@ -555,7 +615,7 @@ cothread_t co_create(unsigned int size, void (*entrypoint)(void),
   if(!co_active_handle) co_active_handle = &co_active_buffer;
   size += 256;
   size &= ~15;
-  *out_size = size;
+  if (out_size) *out_size = size;
 
   if(handle = (unsigned long*)malloc(size)) {
     unsigned long* p = (unsigned long*)((unsigned char*)handle + size);
@@ -745,7 +805,7 @@ cothread_t co_create(unsigned int size, void (*entrypoint)(void),
    ptr[19] = ptr[20]; /* x29, frame pointer */
    ptr[21] = (uintptr_t)entrypoint; /* PC (link register x31 gets saved here). */
 
-   *out_size = size + 512;
+   if (out_size) *out_size = size + 512;
    return handle;
 }
 
@@ -1291,7 +1351,7 @@ cothread_t co_create(unsigned int heapsize, void (*coentry)(void),
     ConvertThreadToFiber(0);
     co_active_ = GetCurrentFiber();
   }
-  *out_size = heapsize;
+  if (out_size) *out_size = heapsize;
   return (cothread_t)CreateFiber(heapsize, co_thunk, (void*)coentry);
 }
 
@@ -1447,7 +1507,7 @@ cothread_t co_create(unsigned int size, void (*coentry)(void),
     }
   }
 
-  *out_size = size;
+  if (out_size) *out_size = size;
   return (cothread_t)thread;
 }
 
@@ -1622,7 +1682,7 @@ cothread_t co_create(unsigned int size, void (*entrypoint)(void),
   if(!co_active_handle) co_active_handle = &co_active_buffer;
   size += 256;  /* allocate additional space for storage */
   size &= ~15;  /* align stack to 16-byte boundary */
-  *out_size = size;
+  if (out_size) *out_size = size;
 
   if(handle = (cothread_t)malloc(size)) {
     long *p = (long*)((char*)handle + size);  /* seek to top of stack */
@@ -1746,7 +1806,7 @@ cothread_t co_create(unsigned int heapsize, void (*coentry)(void),
     ConvertThreadToFiber(0);
     co_active_ = GetCurrentFiber();
   }
-  *out_size = heapsize;
+  if (out_size) *out_size = heapsize;
   return (cothread_t)CreateFiber(heapsize, co_thunk, (void*)coentry);
 }
 

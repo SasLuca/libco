@@ -80,7 +80,7 @@ cothread_t co_create(unsigned int size, void (*coentry)(void),
     }
   }
 
-  *out_size = size;
+  if (out_size) *out_size = size;
   return (cothread_t)thread;
 }
 

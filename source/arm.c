@@ -56,7 +56,7 @@ cothread_t co_create(unsigned int size, void (*entrypoint)(void),
   if(!co_active_handle) co_active_handle = &co_active_buffer;
   size += 256;
   size &= ~15;
-  *out_size = size;
+  if (out_size) *out_size = size;
 
   if(handle = (unsigned long*)malloc(size)) {
     unsigned long* p = (unsigned long*)((unsigned char*)handle + size);

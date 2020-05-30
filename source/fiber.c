@@ -36,7 +36,7 @@ cothread_t co_create(unsigned int heapsize, void (*coentry)(void),
     ConvertThreadToFiber(0);
     co_active_ = GetCurrentFiber();
   }
-  *out_size = heapsize;
+  if (out_size) *out_size = heapsize;
   return (cothread_t)CreateFiber(heapsize, co_thunk, (void*)coentry);
 }
 

@@ -44,7 +44,7 @@ cothread_t co_create(unsigned int heapsize, void (*coentry)(void),
     if((!getcontext(thread) && !(thread->uc_stack.ss_sp = 0)) && (thread->uc_stack.ss_sp = malloc(heapsize))) {
       thread->uc_link = co_running;
       thread->uc_stack.ss_size = heapsize;
-      *out_size = heapsize;
+      if (out_size) *out_size = heapsize;
       makecontext(thread, coentry, 0);
     } else {
       co_delete((cothread_t)thread);

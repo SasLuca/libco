@@ -137,7 +137,7 @@ cothread_t co_create(unsigned int size, void (*entrypoint)(void),
   if(!co_active_handle) co_active_handle = &co_active_buffer;
   size += 512;  /* allocate additional space for storage */
   size &= ~15;  /* align stack to 16-byte boundary */
-  *out_size = size;
+  if (out_size) *out_size = size;
 
   if((handle = (cothread_t)malloc(size))) {
     long long *p = (long long*)((char*)handle + size);  /* seek to top of stack */

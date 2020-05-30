@@ -107,7 +107,7 @@ cothread_t co_create(unsigned int size, void (*entrypoint)(void),
    ptr[19] = ptr[20]; /* x29, frame pointer */
    ptr[21] = (uintptr_t)entrypoint; /* PC (link register x31 gets saved here). */
 
-   *out_size = size + 512;
+   if (out_size) *out_size = size + 512;
    return handle;
 }
 
