@@ -4,7 +4,10 @@
 !.gitignore
 !readme.md
 
+!source/
 !source/*
+
+!generated/
 !generated/*
 
 !example/
