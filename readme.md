@@ -8,6 +8,12 @@ The single header version is manually concatenated from a `libco` fork by @edsip
 All concatenated files are placed in `#pragma region`/`#pragma endregion` blocks for easy collapse and visualization in an editor.
 All `#include` statements from the concatenated files have been commented out and if a file has been concatenated in their place then the statement is followed by a `#pragma region`.
 
+Define `LIBCO_IMPLEMENTATION` in one translation unit in order to include the implementation like so:
+```c
+#define LIBCO_IMPLEMENTATION 
+#include "libco.h"
+```
+
 ## Existing backends:
 - x86 CPUs
 - amd64 CPUs
@@ -21,11 +27,13 @@ All `#include` statements from the concatenated files have been commented out an
 
 ## Compile time options:
 
-1. `#define LIBCO_MP` -> Allows the use `thread_local`. (Note: Doesn't work with `mingw` for some reason)
+- `#define LIBCO_IMPLEMENTATION` -> Include the implementation.
 
-2. `#define LIBCO_NO_SSE` -> Provides a substantial speed-up on Win64 only but it will trash XMM registers. Only use this if you are sure your application or it's dependencies don't use SSE explicitly.
+- `#define LIBCO_MP` -> Allows the use `thread_local`. (Note: Doesn't work with `mingw` for some reason)
 
-3. `#define LIBCO_MPROTECT` -> On `[amd64, arm, ppc, x86]` this will enable the use of `mprotect` instead of marking `co_swap_function` as a `text` (code) section.
+- `#define LIBCO_NO_SSE` -> Provides a substantial speed-up on Win64 only but it will trash XMM registers. Only use this if you are sure your application or it's dependencies don't use SSE explicitly.
+
+- `#define LIBCO_MPROTECT` -> On `[amd64, arm, ppc, x86]` this will enable the use of `mprotect` instead of marking `co_swap_function` as a `text` (code) section.
 
 ## API:
 

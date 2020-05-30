@@ -2,13 +2,29 @@
 
 Single header version of the libco (https://github.com/SasLuca/libco).
 
-Define LIBCO_IMPLEMENTATION in order to include the implementation.
+This is a single header version of libco by Byuu (https://byuu.org/projects/libco), which is a portable library for coroutines in C.
+The single header version is manually concatenated from a libco fork by @edsiper (https://github.com/edsiper/flb_libco).
 
-Forked from https://github.com/edsiper/flb_libco and https://byuu.org/projects/libco
+Define LIBCO_IMPLEMENTATION in one translation unit in order to include the implementation like so:
+```c
+#define LIBCO_IMPLEMENTATION
+#include "libco.h"
+```
 
-License: ISC LICENSE (https://opensource.org/licenses/ISC)
+Existing backends:
+- x86 CPUs
+- amd64 CPUs
+- PowerPC CPUs
+- PowerPC64 ELFv1 CPUs
+- PowerPC64 ELFv2 CPUs
+- ARM 32-bit CPUs
+- ARM 64-bit (AArch64) CPUs
+- POSIX platforms (setjmp)
+- Windows platforms (fibers)
 
-Options:
+Compile time options:
+
+#define LIBCO_IMPLEMENTATION -> Include the implementation.
 
 #define LIBCO_MP -> allow the use thread_local. (Note: Doesn't work with mingw for some reason)
 
@@ -16,22 +32,29 @@ Options:
 
 #define LIBCO_MPROTECT -> On [amd64, arm, ppc, x86] this will enable the use of mprotect instead of marking co_swap_function as a text (code) section.
 
+API:
+
+- cothread_t co_active() -> Returns a reference to the currently active cothread on the current thread.
+- cothread_t co_create(unsigned int, void (*)(void), size_t *) -> Creates a new cothread given a stack size and an entry point. The last argument is an out-parameter to get the actual stack size that the cothread will receive, you can pass `NULL` to ignore it.
+- void co_delete(cothread_t) -> Deletes a cothread.
+- void co_switch(cothread_t) -> Yield from the current cothread to another.
+
 Example:
 
 #define LIBCO_IMPLEMENTATION
-#include "stdlib.h"
+
 #include "stdio.h"
 #include "libco.h"
 
-cothread_t main_cothread; // main_thread
+cothread_t main_cothread;
 
-void my_entry()
+void my_entry(void)
 {
     int i = 0;
     while (1)
     {
         printf("%d\n", i++);
-        
+
         // Yield to main cothread
         co_switch(main_cothread);
     }
@@ -43,15 +66,13 @@ int main()
     main_cothread = co_active();
 
     // Init separate cothread
-    size_t actual_size = 0;
-    size_t request_size = 1 * 1024 * 1024;
-    cothread_t other_cothread = co_create(request_size, my_entry, &actual_size);
-    
+    cothread_t other_cothread = co_create(1 * 1024 * 1024, my_entry, NULL);
+
     // Yield to the cothread
     co_switch(other_cothread);
     co_switch(other_cothread);
     co_switch(other_cothread);
-    
+
     // Delete the other cothread
     co_delete(other_cothread);
 }
@@ -1832,3 +1853,32 @@ void co_switch(cothread_t cothread) {
 #pragma endregion
 
 #endif
+
+/*
+LICENSE
+
+This is free and unencumbered software released into the public domain.
+
+Anyone is free to copy, modify, publish, use, compile, sell, or
+distribute this software, either in source code form or as a compiled
+binary, for any purpose, commercial or non-commercial, and by any
+means.
+
+In jurisdictions that recognize copyright laws, the author or authors
+of this software dedicate any and all copyright interest in the
+software to the public domain. We make this dedication for the benefit
+of the public at large and to the detriment of our heirs and
+successors. We intend this dedication to be an overt act of
+relinquishment in perpetuity of all present and future rights to this
+software under copyright law.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+
+For more information, please refer to <https://unlicense.org>
+*/
