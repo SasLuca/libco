@@ -7,6 +7,8 @@
 !source/*
 !generated/*
 
+!example/
 !example/example.c
+!example/libco.h
 !example/build.bat
 !example/CMakeLists.txt
