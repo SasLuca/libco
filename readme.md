@@ -1,16 +1,18 @@
-# Single header version of the libco
+# Single header version of libco
+
+**Download the [single header here](https://raw.githubusercontent.com/SasLuca/libco/master/generated/libco.h) or from the `generated` directory**.
 
 This is a single header version of `libco` by Byuu (https://byuu.org/projects/libco), which is a portable library for coroutines in C.
-The single header version is manually concatenated from `libco` fork by @edsiper (https://github.com/edsiper/flb_libco).
+The single header version is manually concatenated from a `libco` fork by @edsiper (https://github.com/edsiper/flb_libco).
 
 All concatenated files are placed in `#pragma region`/`#pragma endregion` blocks for easy collapse and visualization in an editor.
 All `#include` statements from the concatenated files have been commented out and if a file has been concatenated in their place then the statement is followed by a `#pragma region`.
 
 ## Compile time options:
 
-1. `#define LIBCO_MP` -> allow the use `thread_local`. (Note: Doesn't work with `mingw` for some reason)
+1. `#define LIBCO_MP` -> Allows the use `thread_local`. (Note: Doesn't work with `mingw` for some reason)
 
-2. `#define LIBCO_NO_SSE` -> provides a substantial speed-up on Win64 only but it will trash XMM registers. Only use this if you are sure your application or it's dependencies don't use SSE explicitly.
+2. `#define LIBCO_NO_SSE` -> Provides a substantial speed-up on Win64 only but it will trash XMM registers. Only use this if you are sure your application or it's dependencies don't use SSE explicitly.
 
 3. `#define LIBCO_MPROTECT` -> On `[amd64, arm, ppc, x86]` this will enable the use of `mprotect` instead of marking `co_swap_function` as a `text` (code) section.
 
