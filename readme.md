@@ -1,6 +1,6 @@
-# Single header version of the libco
+# Single header version of libco
 
-**Get the file from the `generated` directory**.
+**Download the [single header here](https://raw.githubusercontent.com/SasLuca/libco/master/generated/libco.h) or from the `generated` directory**.
 
 This is a single header version of `libco` by Byuu (https://byuu.org/projects/libco), which is a portable library for coroutines in C.
 The single header version is manually concatenated from a `libco` fork by @edsiper (https://github.com/edsiper/flb_libco).
